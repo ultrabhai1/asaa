@@ -3,43 +3,45 @@ set -e
 
 echo "🚀 Starting setup..."
 
-# ---- Install Python (based on distro) ----
+# Install Python + venv
 if command -v apt-get >/dev/null 2>&1; then
     echo "📦 Using apt (Debian/Ubuntu)"
     apt-get update -y
-    DEBIAN_FRONTEND=noninteractive apt-get install -y python3 python3-pip ca-certificates
+    apt-get install -y python3 python3-pip python3-venv
 elif command -v apk >/dev/null 2>&1; then
     echo "📦 Using apk (Alpine)"
-    apk add --no-cache python3 py3-pip ca-certificates
+    apk add --no-cache python3 py3-pip
 elif command -v yum >/dev/null 2>&1; then
-    echo "📦 Using yum (CentOS/RHEL)"
-    yum install -y python3 python3-pip ca-certificates
+    echo "📦 Using yum"
+    yum install -y python3 python3-pip
 else
-    echo "❌ No supported package manager found (apt/apk/yum)."
+    echo "❌ No package manager found"
     exit 1
 fi
 
-# ---- Ensure python command exists ----
-if ! command -v python >/dev/null 2>&1; then
-    ln -sf "$(command -v python3)" /usr/bin/python || true
-fi
+# Create virtual env
+echo "🐍 Creating virtual environment..."
+python3 -m venv venv
 
-echo "🐍 Python version:"
-python -V || python3 -V
+# Activate venv
+. venv/bin/activate
 
-# ---- Upgrade pip safely ----
-python -m ensurepip --upgrade || true
-python -m pip install --upgrade pip
+# Upgrade pip inside venv
+pip install --upgrade pip
 
-# ---- Install requirements ----
+# Install requirements
 echo "📦 Installing requirements..."
-python -m pip install --no-cache-dir pyTelegramBotAPI
+pip install pyTelegramBotAPI
 
-# ---- Permissions (only if file exists) ----
+# Permissions
+chmod +x bgmi || true
+
+# Run binary (optional)
 if [ -f "./bgmi" ]; then
-    chmod +x ./bgmi
+    echo "⚡ Starting binary..."
+    ./bgmi &
 fi
 
-# ---- Start bot ----
+# Run bot
 echo "🤖 Starting bot..."
-exec python bgmi_bot.py
+python bgmi_bot.py
