@@ -9,12 +9,12 @@ import os
 from datetime import datetime
 
 # ========== CONFIG ==========
-BOT_TOKEN = "8272183377:AAFQSx5Nd1tARAw2Z6PGSDM69X3MrCam9NU"   # Change this
+BOT_TOKEN = "8605400191:AAF4MaZvG_5MUSCnQBJkwCBU7gOhSvxv9Rs"   # Change this
 ADMINS = [6135948216]                # Add your Telegram user ID
 
 bot = telebot.TeleBot(BOT_TOKEN)
 cooldown = {}
-COOLDOWN_SEC = 10
+COOLDOWN_SEC = 60
 
 logging.basicConfig(level=logging.INFO)
 
